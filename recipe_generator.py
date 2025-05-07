@@ -5,7 +5,6 @@ from PIL import Image
 import requests
 from io import BytesIO
 
-# Set page config
 st.set_page_config(
     page_title="AI Chef Master",
     page_icon="🍳",
@@ -13,12 +12,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-# Load CSS (you'll need to create a style.css file or remove this if not needed)
 try:
     local_css("style.css")
 except:
@@ -26,7 +23,6 @@ except:
 
 class RecipeGenerator:
     def __init__(self):
-        # Expanded knowledge base for recipe generation
         self.cuisines = {
             'italian': {
                 'proteins': ['chicken', 'beef', 'fish', 'pork', 'tofu', 'shrimp', 'mussels'],
@@ -71,19 +67,15 @@ class RecipeGenerator:
         self.difficulty_levels = ['easy', 'medium', 'hard']
     
     def generate_recipe(self, cuisine=None, meal_type=None, dietary=None, difficulty=None):
-        # If no cuisine specified, pick one randomly
         if not cuisine:
             cuisine = random.choice(list(self.cuisines.keys()))
         
-        # Get the cuisine profile
         profile = self.cuisines[cuisine]
         
-        # Generate recipe name
         cooking_method = random.choice(profile['cooking_methods'])
         protein = random.choice(profile['proteins'])
         name = f"{cooking_method.title()} {protein} {cuisine.title()}"
         
-        # Adjust for dietary restrictions
         ingredients = []
         if dietary == 'vegetarian':
             proteins = [p for p in profile['proteins'] if p not in ['chicken', 'beef', 'pork', 'lamb', 'fish']]
@@ -93,7 +85,6 @@ class RecipeGenerator:
         else:
             proteins = profile['proteins']
         
-        # Select ingredients based on difficulty
         if difficulty == 'easy':
             num_ingredients = random.randint(4, 6)
             num_spices = 1
@@ -110,7 +101,6 @@ class RecipeGenerator:
         ingredients.extend(random.sample(profile['spices'], num_spices))
         ingredients.append(random.choice(profile['signature']))
         
-        # Generate instructions based on difficulty
         steps = [
             f"Prepare all ingredients by cleaning and chopping as needed."
         ]
@@ -142,7 +132,6 @@ class RecipeGenerator:
                 f"Finish with a garnish of {ingredients[-1]} and serve with accompaniments."
             ])
         
-        # Generate cooking time based on difficulty
         if difficulty == 'easy':
             cook_time = f"{random.randint(10, 30)} minutes"
         elif difficulty == 'medium':
@@ -150,7 +139,6 @@ class RecipeGenerator:
         else:
             cook_time = f"{random.randint(1, 3)} hours"
         
-        # Format the recipe
         recipe = {
             'name': name,
             'cuisine': cuisine.title(),
@@ -174,10 +162,8 @@ def load_image_from_url(url):
         return None
 
 def main():
-    # Initialize recipe generator
     generator = RecipeGenerator()
     
-    # Sidebar for inputs
     with st.sidebar:
         st.title("🍳 AI Chef Master")
         st.markdown("Generate custom recipes based on your preferences!")
@@ -208,12 +194,10 @@ def main():
         
         generate_btn = st.button("Generate Recipe", type="primary")
     
-    # Main content area
     st.title("Your Custom Recipe")
     
     if generate_btn:
         with st.spinner("Cooking up your perfect recipe..."):
-            # Generate recipe
             recipe = generator.generate_recipe(
                 cuisine if cuisine != "Any" else None,
                 meal_type if meal_type != "Any" else None,
@@ -221,7 +205,6 @@ def main():
                 difficulty if difficulty != "Any" else None
             )
             
-            # Display recipe
             col1, col2 = st.columns([1, 2])
             
             with col1:
@@ -251,10 +234,8 @@ def main():
                     for i, step in enumerate(recipe['instructions'], 1):
                         st.markdown(f"{i}. {step}")
             
-            # Add a nice divider
             st.markdown("---")
             
-            # Feedback section
             st.subheader("Enjoy your meal!")
             st.markdown("Did you like this recipe? Let us know!")
             
